@@ -186,8 +186,14 @@ ON CONFLICT DO NOTHING;
 --   participant_count for that one at 0 so the 0 -> 1 growth is visible when
 --   you sign up via the API in the DoD checks.
 -- -----------------------------------------------------------------------------
-INSERT INTO hangout_participants (hangout_id, user_id) VALUES
-    (1, 1),
-    (1, 3),
-    (2, 5)
-ON CONFLICT DO NOTHING;
+
+INSERT INTO hangout_participants (hangout_id, user_id) 
+SELECT h.hangout_id, v.user_id 
+FROM (
+    VALUES 
+        ('Yarkon Park morning walk', 1),
+        ('Yarkon Park morning walk', 3),
+        ('Cafe Paws brunch', 5)
+) AS v(hangout_title, user_id)
+JOIN hangouts h ON h.title = v.hangout_title
+ON CONFLICT (hangout_id, user_id) DO NOTHING;
